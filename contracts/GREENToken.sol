@@ -19,9 +19,9 @@ contract GreenToken is ERC20, ERC20Burnable, AccessControl {
      */
     constructor(address stakingVault, address growthUtility) ERC20("Green Token", "GREEN") {
         // Grant roles
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setupRole(MINTER_ROLE, stakingVault);
-        _setupRole(MINTER_ROLE, growthUtility);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, stakingVault);
+        _grantRole(MINTER_ROLE, growthUtility);
     }
 
     /**

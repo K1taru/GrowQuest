@@ -5,6 +5,9 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
+require("dotenv").config({ path: path.resolve(__dirname, ".env") });
+const { ADMIN_ADDRESS } = process.env;
+
 /**
  * @title GreenToken
  * @notice ERC20 token used as rewards (GREEN) in the GrowQuest game. Minting is role-restricted.
@@ -19,7 +22,10 @@ contract GreenToken is ERC20, ERC20Burnable, AccessControl {
      */
     constructor(address stakingVault, address growthUtility) ERC20("Green Token", "GREEN") {
         // Grant roles
+        _grantRole(DEFAULT_ADMIN_ROLE, ADMIN_ADDRESS);
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(MINTER_ROLE, ADMIN_ADDRESS);
+        _grantRole(MINTER_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, stakingVault);
         _grantRole(MINTER_ROLE, growthUtility);
     }

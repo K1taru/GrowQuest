@@ -10,7 +10,7 @@ async function main() {
   console.log(`Deploying GrowthUtility with account: ${deployer.address}`);
   
   // Deploy the GrowthUtility contract, passing NFT and token addresses
-  const utility = await deployContract("GrowthUtility", [nftAddress, tokenAddress]);
+  const utility = await deployContract("GrowthUtility", [tokenAddress, nftAddress]);
   console.log(`GrowthUtility deployed to: ${utility.address}`);
   
   // Grant GrowthUtility the MINTER_ROLE on GreenToken (so it can mint rewards)

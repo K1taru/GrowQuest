@@ -1,20 +1,26 @@
 import { ethers } from "hardhat";
+import { Contract } from "ethers";
 
 /**
- * Helper function to deploy a contract by name with optional constructor arguments.
+ * Helper function to deploy a contract by name with optional constructor arguments and library addresses.
  * @param name The contract name (must match compiled artifact)
  * @param args Constructor arguments
- * @param libraries Optional library addresses
- * @returns The deployed contract instance
+ * @param libraries Optional library addresses for linked libraries
+ * @returns The deployed contract instance (type-safe)
  */
-export async function deployContract(
+export async function deployContract<T extends Contract>(
   name: string,
   args: any[] = [],
-  libraries: any = {}
-): Promise<any> {
-  const factory = await ethers.getContractFactory(name, { libraries });
-  const contract = await factory.deploy(...args);
-  await contract.deployed();
-  console.log(`${name} deployed at: ${contract.address}`);
-  return contract;
+  libraries: { [libraryName: string]: string } = {}
+): Promise<T> {
+  try {
+    const factory = await ethers.getContractFactory(name, { libraries });
+    const contract = await factory.deploy(...args);
+    await contract.deployed();
+    console.log(`${name} deployed at: ${contract.address}`);
+    return contract as T;
+  } catch (error) {
+    console.error(`Failed to deploy ${name}:`, error);
+    throw error;
+  }
 }

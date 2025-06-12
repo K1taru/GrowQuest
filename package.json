@@ -4,7 +4,11 @@
   "description": "GrowQuest is a decentralized web application using ERC-20 and ERC-721 standards. Stake and grow plants and earn rewards!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "compile": "hardhat compile",
+    "deploy": "ts-node scripts/deploy/mainDeploy.ts",
+    "test": "hardhat test",
+    "clean": "hardhat clean",
+    "typechain": "hardhat typechain"
   },
   "repository": {
     "type": "git",
@@ -19,7 +23,18 @@
   },
   "homepage": "https://github.com/K1taru/GrowQuest#readme",
   "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.9",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.24.2"
+    "@typechain/hardhat": "^9.1.0",
+    "@types/chai": "^4.3.4",
+    "chai": "^4.3.7",
+    "hardhat": "^2.24.2",
+    "ts-node": "^10.9.2",
+    "typechain": "^8.3.2",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.3.0",
+    "ethers": "^6.14.3"
   }
 }

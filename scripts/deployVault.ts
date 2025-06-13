@@ -1,13 +1,14 @@
 import { ethers } from "hardhat";
 import { deployContract } from "./utils/deployHelpers";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
   const [deployer] = await ethers.getSigners();
-  const nftAddress = "0xNFT_ADDRESS";
-  const greenTokenAddress = "0xGREEN_TOKEN_ADDRESS";
+  const nftAddress = process.env.NFT_ADDRESS as string;
+  const greenTokenAddress = process.env.GREEN_TOKEN_ADDRESS as string;
   console.log(`Deploying StakingVault with account: ${deployer.address}`);
 
-  // Deploy the StakingVault contract, passing NFT and GreenToken addresses
   const vault = await deployContract("StakingVault", [nftAddress, greenTokenAddress]);
   console.log(`StakingVault deployed to: ${vault.address}`);
 }

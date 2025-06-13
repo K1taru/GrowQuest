@@ -1,10 +1,12 @@
 import hre from "hardhat";
 import { deployContract } from "./utils/deployHelpers";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 async function main() {
   const [deployer] = await hre.ethers.getSigners();
   const placeholder = "0x0000000000000000000000000000000000000000";
-  const greenTokenAddress = "0xYOUR_GREEN_TOKEN_ADDRESS"; // Set after deploying GreenToken
+  const greenTokenAddress = process.env.GREEN_TOKEN_ADDRESS as string; // Loaded from .env
   console.log(`Deploying GrowQuestNFT with account: ${deployer.address}`);
 
   // Deploy the GrowQuestNFT contract with placeholder for growthUtility

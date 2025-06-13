@@ -28,22 +28,26 @@ contract GrowQuestNFT is ERC721, AccessControl {
     mapping(Rarity => uint256) public rarityMaxLevel;
     mapping(Rarity => uint256) public rarityBaseEXP;
 
-    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
-        return super.supportsInterface(interfaceId);
-    }
-
     event Minted(address indexed to, uint256 indexed tokenId, Rarity rarity);
     event BatchMinted(address indexed to, uint256[] tokenIds);
     event LevelUpgraded(uint256 indexed tokenId, uint256 newLevel);
     event Burned(address indexed owner, uint256 indexed tokenId, uint256 reward);
 
+    // Required for ERC721 + AccessControl inheritance
+    function supportsInterface(bytes4 interfaceId) public view virtual override(ERC721, AccessControl) returns (bool) {
+        return super.supportsInterface(interfaceId);
+    }
+
     constructor(
         address initialGreenToken,
+        address growthUtility,
         uint256 _singleCost,
         uint256 _batchCost,
         uint256 _burnReward
     ) ERC721("GrowQuestNFT", "GQNFT") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(GROWTH_UTILITY_ROLE, growthUtility);
+
         greenToken = IERC20Burnable(initialGreenToken);
         singleMintCost = _singleCost > 0 ? _singleCost : 0.00001 ether;
         batchMintCost = _batchCost > 0 ? _batchCost : 0.00005 ether;

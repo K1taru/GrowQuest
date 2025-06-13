@@ -1,0 +1,65 @@
+Deployment Instructions
+
+A. Deploy Contracts in Order
+
+    1. Run deployToken.ts.
+    2. Save the deployed GreenToken address.
+    3. Update deployNFT.ts with the GreenToken address, then run it.
+    4. Save the deployed GrowQuestNFT address.
+    5. Update deployUtility.ts with the GreenToken and GrowQuestNFT addresses, then run it.
+    6. Save the deployed GrowthUtility address.
+    7. Update deployVault.ts with the GrowQuestNFT and GreenToken addresses, then run it.
+    8. Save the deployed StakingVault address.
+
+B. Grant Roles After Deployment
+
+    Roles can be granted using a script, Etherscan, or a frontend.
+
+    Using a Hardhat Script:
+
+        import hre from "hardhat";
+
+        async function main() {
+            const greenTokenAddress = "0xGREEN_TOKEN_ADDRESS";
+            const nftAddress = "0xNFT_ADDRESS";
+            const growthUtilityAddress = "0xGROWTH_UTILITY_ADDRESS";
+            const stakingVaultAddress = "0xSTAKING_VAULT_ADDRESS";
+
+            // Grant MINTER_ROLE to GrowthUtility and StakingVault on GreenToken
+            const greenToken = await hre.ethers.getContractAt("GreenToken", greenTokenAddress);
+            const MINTER_ROLE = await greenToken.MINTER_ROLE();
+            await greenToken.grantRole(MINTER_ROLE, growthUtilityAddress);
+            await greenToken.grantRole(MINTER_ROLE, stakingVaultAddress);
+
+            // Grant GROWTH_UTILITY_ROLE to GrowthUtility on GrowQuestNFT
+            const nft = await hre.ethers.getContractAt("GrowQuestNFT", nftAddress);
+            const GROWTH_UTILITY_ROLE = await nft.GROWTH_UTILITY_ROLE();
+            await nft.grantRole(GROWTH_UTILITY_ROLE, growthUtilityAddress);
+
+            console.log("Roles granted successfully!");
+        }
+
+        main().catch((error) => {
+            console.error(error);
+            process.exit(1);
+        });
+
+    Using Etherscan:
+
+        1. Go to the contract’s Etherscan page.
+        2. Click "Write Contract".
+        3. Connect your admin wallet.
+        4. Locate the grantRole function.
+        5. For each role:
+            - Enter the role (as bytes32, copy from contract or script).
+            - Enter the address to grant the role to.
+            - Submit the transaction.
+
+    Using a Frontend Dashboard:
+
+        1. Connect with an admin wallet.
+        2. Call the grantRole function on the contract using ethers.js or web3.js.
+
+        Example:
+
+            await contract.grantRole(roleBytes32, addressToGrant);

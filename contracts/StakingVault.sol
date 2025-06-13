@@ -12,8 +12,6 @@ import "./GrowQuestNFT.sol";
  * @notice Handles staking (locking) of GrowQuestNFTs to earn GREEN tokens and EXP, with rewards based on rarity.
  */
 contract StakingVault is AccessControl, IERC721Receiver {
-    using SafeMath for uint256;
-
     // Interfaces to NFT and token contracts
     GrowQuestNFT public immutable nft;
     GreenToken public immutable greenToken;
@@ -47,9 +45,9 @@ contract StakingVault is AccessControl, IERC721Receiver {
     constructor(address nftAddress, address tokenAddress) {
         nft = GrowQuestNFT(nftAddress);
         greenToken = GreenToken(tokenAddress);
-        _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+        _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
 
-        // Example base rewards per rarity (adjust as needed)
+        // Example base rewards per rarity, will adjust later
         baseGreenRewardPerRarity[GrowQuestNFT.Rarity.Common] = 100 * 1e18;
         baseGreenRewardPerRarity[GrowQuestNFT.Rarity.Uncommon] = 120 * 1e18;
         baseGreenRewardPerRarity[GrowQuestNFT.Rarity.Rare] = 150 * 1e18;
@@ -103,7 +101,7 @@ contract StakingVault is AccessControl, IERC721Receiver {
         userStake.claimed = true;
 
         // Compute reward multiplier index
-        uint256 idx;
+        uint256 idx = 0;
         for (uint256 i = 0; i < lockDurations.length; i++) {
             if (lockDurations[i] == userStake.lockDuration) {
                 idx = i;
@@ -115,8 +113,8 @@ contract StakingVault is AccessControl, IERC721Receiver {
         GrowQuestNFT.Rarity rarity = nft.nftRarity(tokenId);
 
         // Calculate rewards based on rarity and multiplier
-        uint256 reward = baseGreenRewardPerRarity[rarity].mul(multipliers[idx]).div(100);
-        uint256 expReward = baseExpPerRarity[rarity].mul(multipliers[idx]).div(100);
+        uint256 reward = (baseGreenRewardPerRarity[rarity] * multipliers[idx]) / 100;
+        uint256 expReward = (baseExpPerRarity[rarity] * multipliers[idx]) / 100;
 
         // Return NFT to user
         IERC721(address(nft)).safeTransferFrom(address(this), msg.sender, tokenId);
@@ -133,11 +131,11 @@ contract StakingVault is AccessControl, IERC721Receiver {
     /**
      * @notice ERC721 receiver hook to allow safeTransferFrom.
      */
-    function onERC721Received(
-        address operator,
-        address from,
-        uint256 tokenId,
-        bytes calldata data
+    function onERC721Received( //commented to silence unused parameter warnings
+        address /*operator*/,
+        address /*from*/,
+        uint256 /*tokenId*/,
+        bytes calldata /*data*/
     ) external pure override returns (bytes4) {
         return IERC721Receiver.onERC721Received.selector;
     }

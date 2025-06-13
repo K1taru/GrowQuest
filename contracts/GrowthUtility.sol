@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
@@ -40,7 +40,7 @@ contract GrowthUtility is AccessControl {
     constructor(address greenTokenAddress, address nftAddress) {
         require(greenTokenAddress != address(0), "Invalid token address");
         require(nftAddress != address(0), "Invalid NFT address");
-        _setupRole(ADMIN_ROLE, msg.sender);
+        _grantRole(ADMIN_ROLE, msg.sender);
 
         greenToken = IGreenToken(greenTokenAddress);
         nftContract = IGrowQuestNFT(nftAddress);

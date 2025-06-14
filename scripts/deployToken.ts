@@ -9,7 +9,8 @@ async function main() {
 
   // Deploy the GreenToken contract with placeholder addresses
   const token = await deployContract("GreenToken", [placeholder, placeholder]);
-  console.log(`GreenToken deployed to: ${token.address}`);
+  const tokenAddress = await token.getAddress();
+  console.log(`GreenToken deployed to: ${tokenAddress}`);
 }
 
 main().catch((error) => {

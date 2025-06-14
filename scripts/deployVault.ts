@@ -10,7 +10,8 @@ async function main() {
   console.log(`Deploying StakingVault with account: ${deployer.address}`);
 
   const vault = await deployContract("StakingVault", [nftAddress, greenTokenAddress]);
-  console.log(`StakingVault deployed to: ${vault.address}`);
+  const vaultAddress = await vault.getAddress();
+  console.log(`StakingVault deployed to: ${vaultAddress}`);
 }
 
 main().catch((error) => {

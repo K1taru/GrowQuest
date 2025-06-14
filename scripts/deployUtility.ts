@@ -10,7 +10,8 @@ async function main() {
   console.log(`Deploying GrowthUtility with account: ${deployer.address}`);
 
   const utility = await deployContract("GrowthUtility", [tokenAddress, nftAddress]);
-  console.log(`GrowthUtility deployed to: ${utility.address}`);
+  const utilityAddress = await utility.getAddress();
+  console.log(`GrowthUtility deployed to: ${utilityAddress}`);
 }
 
 main().catch((error) => {

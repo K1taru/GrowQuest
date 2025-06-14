@@ -3,6 +3,8 @@ pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "base64-sol/base64.sol";
 
 interface IERC20Burnable {
     function transfer(address to, uint256 amount) external returns (bool);
@@ -27,6 +29,9 @@ contract GrowQuestNFT is ERC721, AccessControl {
 
     mapping(Rarity => uint256) public rarityMaxLevel;
     mapping(Rarity => uint256) public rarityBaseEXP;
+
+    // Dynamic NFT image logic: rarity + level group (every 2 levels)
+    mapping(Rarity => mapping(uint256 => string)) public rarityLevelImage;
 
     event Minted(address indexed to, uint256 indexed tokenId, Rarity rarity);
     event BatchMinted(address indexed to, uint256[] tokenIds);
@@ -142,6 +147,53 @@ contract GrowQuestNFT is ERC721, AccessControl {
         else if (rand < 99) return Rarity.Legendary;
         else return Rarity.Mythical;
     }
+
+    // --- Dynamic NFT image logic ---
+
+    // Admin sets the image URI for each rarity and level group (every 2 levels)
+    function setImageURI(Rarity rarity, uint256 levelGroup, string calldata uri) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        rarityLevelImage[rarity][levelGroup] = uri;
+    }
+
+    // Helper: Get the level group (1–2: 1, 3–4: 3, 5–6: 5, etc.)
+    function _levelGroup(uint256 level) internal pure returns (uint256) {
+        return ((level - 1) / 2) * 2 + 1;
+    }
+
+    // Helper: Rarity to string
+    function _rarityToString(Rarity rarity) internal pure returns (string memory) {
+        if (rarity == Rarity.Common) return "Common";
+        if (rarity == Rarity.Uncommon) return "Uncommon";
+        if (rarity == Rarity.Rare) return "Rare";
+        if (rarity == Rarity.Epic) return "Epic";
+        if (rarity == Rarity.Legendary) return "Legendary";
+        if (rarity == Rarity.Mythical) return "Mythical";
+        return "";
+    }
+
+    // Dynamic metadata with image that changes by rarity and every 2 levels
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+        require(nftLevel[tokenId] > 0, "Nonexistent token");
+        Rarity rarity = nftRarity[tokenId];
+        uint256 level = nftLevel[tokenId];
+        uint256 group = _levelGroup(level);
+        string memory image = rarityLevelImage[rarity][group];
+
+        string memory json = string(abi.encodePacked(
+            '{"name":"GrowQuest NFT #', Strings.toString(tokenId),
+            '","description":"A dynamic NFT that evolves with level and rarity.",',
+            '"attributes":[{"trait_type":"Rarity","value":"', _rarityToString(rarity),
+            '"},{"trait_type":"Level","value":"', Strings.toString(level), '"}],',
+            '"image":"', image, '"}'
+        ));
+
+        return string(abi.encodePacked(
+            "data:application/json;base64,",
+            Base64.encode(bytes(json))
+        ));
+    }
+
+    // --- End dynamic NFT image logic ---
 
     // Admin functions (setters)
     function setSingleMintCost(uint256 cost) external onlyRole(DEFAULT_ADMIN_ROLE) {

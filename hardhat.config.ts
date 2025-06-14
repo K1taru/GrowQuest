@@ -3,8 +3,7 @@ require("dotenv").config({ path: path.resolve(__dirname, ".env") });
 
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
-import "@nomiclabs/hardhat-ethers";
-import "@nomiclabs/hardhat-etherscan";
+
 
 const { PRIVATE_KEY, ETHERSCAN_API_KEY } = process.env;
 

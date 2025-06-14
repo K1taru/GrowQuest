@@ -16,8 +16,9 @@ export async function deployContract<T extends Contract>(
   try {
     const factory = await ethers.getContractFactory(name, { libraries });
     const contract = await factory.deploy(...args);
-    await contract.deployed();
-    console.log(`${name} deployed at: ${contract.address}`);
+    await contract.waitForDeployment();
+    const address = await contract.getAddress();
+    console.log(`${name} deployed at: ${address}`);
     return contract as T;
   } catch (error) {
     console.error(`Failed to deploy ${name}:`, error);

@@ -3,11 +3,11 @@ Deployment Instructions
 A. Deploy Contracts in Order
 
     1. Run deployToken.ts.
-    2. Save the deployed GreenToken address.
+    2. Save the deployed GreenToken address. (process.env.GREEN_TOKEN_ADDRESS)
     3. Update deployNFT.ts with the GreenToken address, then run it.
-    4. Save the deployed GrowQuestNFT address.
+    4. Save the deployed GrowQuestNFT address. (process.env.NFT_ADDRESS)
     5. Update deployUtility.ts with the GreenToken and GrowQuestNFT addresses, then run it.
-    6. Save the deployed GrowthUtility address.
+    6. Save the deployed GrowthUtility address. (process.env.GROWTH_UTILITY_ADDRESS)
     7. Update deployVault.ts with the GrowQuestNFT and GreenToken addresses, then run it.
     8. Save the deployed StakingVault address.
 
